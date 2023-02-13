@@ -58,6 +58,34 @@ class Surface {
     }
   }
 
+  getDistanceXWithWrapping(atomA, atomB) {
+    // calculate the distance with wrapping and without - take the nearest
+    let dx = atomA.position.x - atomB.position.x;
+    let dxWrapMax = atomA.position.x - (atomB.position.x + width);
+    let dxWrapMin = atomA.position.x - (atomB.position.x - width);
+    if (Math.abs(dx) < Math.abs(dxWrapMax) && Math.abs(dx) < Math.abs(dxWrapMin)) {
+      return dx
+    } else if (Math.abs(dxWrapMax) < Math.abs(dxWrapMin)) {
+      return dxWrapMax;
+    } else {
+      return dxWrapMin;
+    }
+  }
+
+  getDistanceYWithWrapping(atomA, atomB) {
+    // calculate the distance with wrapping and without - take the nearest
+    let dy = atomA.position.y - atomB.position.y;
+    let dyWrapMax = atomA.position.y - (atomB.position.y + height);
+    let dyWrapMin = atomA.position.y - (atomB.position.y - height);
+    if (Math.abs(dy) < Math.abs(dyWrapMax) && Math.abs(dy) < Math.abs(dyWrapMin)) {
+      return dy
+    } else if (Math.abs(dyWrapMax) < Math.abs(dyWrapMin)) {
+      return dyWrapMax;
+    } else {
+      return dyWrapMin;
+    }
+  }
+
   doCalculations() {
     for (let i = 0; i < this.atoms.length; ++i) {
       let force = createVector(0, 0);
@@ -67,8 +95,11 @@ class Surface {
 
           let g = this.attractionMatrix.getAttractionForColors(atomA.colorRef, atomB.colorRef) * 0.01;
 
-          let dx = atomA.position.x - atomB.position.x;
-          let dy = atomA.position.y - atomB.position.y;
+          // let dx = atomA.position.x - atomB.position.x;
+          // let dy = atomA.position.y - atomB.position.y;
+          let dx = this.getDistanceXWithWrapping(atomA, atomB);
+          let dy = this.getDistanceYWithWrapping(atomA, atomB);
+
           let distance = Math.sqrt(dx * dx + dy * dy);
 
           // atom force radius 
